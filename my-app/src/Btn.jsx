@@ -1,8 +1,8 @@
 import './Btn.css'
 
-const SingleBtn = ({onClick, type, children}) => {
+const SingleBtn = ({onClick, variation, type, children}) => {
     return(
-        <button className="btn" type={type} onClick={onClick}>{children}</button>
+        <button className={`btn ${variation}`} type={type} onClick={onClick}>{children}</button>
     )
 }
 

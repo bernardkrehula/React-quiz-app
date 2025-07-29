@@ -8,14 +8,15 @@ import { throttle } from 'lodash';
 //Ako trazis vise od 20 pitanja za neku kategoriju pod nekim uvjetima a nema toliko pitanja napisi npr nismo u mogucnosti isporuciti 20 teskih pitanja 
 function App() {
   const [ tokenId, setTokenId ] = useState('');
-  const [ questions, setQuestions ] = useState([])
+  const [ questions, setQuestions ] = useState([]);
   const [ questionsProperties, setQuestionsProperties ] = useState({
     amount: '10',
     category: '21',
     difficulty: 'easy'
-  })
+  });
+  const [ isStartClicked, setStartClicked ] = useState(false);
+  const [ currentIndex, setCurrentIndex ] = useState(0);
   
-
   const url = `https://opentdb.com/api.php?amount=10&category=24&difficulty=easy&type=multiple&token=${tokenId}`;
   
     const fetchData = async() => {
@@ -27,7 +28,6 @@ function App() {
     const fetchTokenData = async() => {
       const res = await fetch(`https://opentdb.com/api.php?amount=${questionsProperties.amount}&category=${questionsProperties.category}&difficulty=${questionsProperties.difficulty}&token=${tokenId}`)
       const data = await res.json();
-     
       fetchData()
       setQuestions(data.results)
     }
@@ -44,37 +44,54 @@ function App() {
     const handleSubmit = (e) => {
       e.preventDefault();
       fetchTokenData();
-      
+      setStartClicked(true)
     }
+    const changeQuestionIndex = () => {
+      console.log(questions)
+      setCurrentIndex(prev => prev + 1)
+    };
 
   return (
     <>
       <div className='main'>
-        <h1>Quiz setup</h1>
-        <form onSubmit={handleSubmit}>
-          <li>
-            <h2>Number of questions</h2>
-            <input type="number" value={questionsProperties.amount} min={0} max={20} name='amount' onChange={handleChange}/>
-          </li>
-          <li>
-            <h2>Category</h2>
-            <select id="" name='category' value={questionsProperties.category} onChange={handleChange}>
-              <option value="21">sports</option>
-              <option value="22">geography</option>
-              <option value="20">mytholoy</option>
-              <option value="25">art</option>
-            </select>
-          </li>
-          <li>
-            <h2>Difficulty</h2>
-            <select id="" name='difficulty' value={questionsProperties.difficulty} onChange={handleChange}>
-              <option value="easy">easy</option>
-              <option value="medium">medium</option>
-              <option value="hard">hard</option>
-            </select>
-          </li>
-          <SingleBtn type='submit'>Start playing</SingleBtn>
-        </form>
+        {!isStartClicked ? 
+        <>
+          <h1>Quiz setup</h1>
+          <form onSubmit={handleSubmit}>
+            <li>
+              <h2>Number of questions</h2>
+              <input type="number" value={questionsProperties.amount} min={0} max={20} name='amount' onChange={handleChange}/>
+            </li>
+            <li>
+              <h2>Category</h2>
+              <select id="" name='category' value={questionsProperties.category} onChange={handleChange}>
+                <option value="21">sports</option>
+                <option value="22">geography</option>
+                <option value="20">mytholoy</option>
+                <option value="25">art</option>
+              </select>
+            </li>
+            <li>
+              <h2>Difficulty</h2>
+              <select id="" name='difficulty' value={questionsProperties.difficulty} onChange={handleChange}>
+                <option value="easy">easy</option>
+                <option value="medium">medium</option>
+                <option value="hard">hard</option>
+              </select>
+            </li>
+            <SingleBtn type='submit'>Start playing</SingleBtn>
+            </form>
+          </>
+          :
+          <>
+            <h2>Correct answers: 0/0</h2>
+            <h1>Which team won the 2015-16 English Premier League?</h1>
+            <ul>
+              {}
+              <SingleBtn variation='answer' onClick={changeQuestionIndex}></SingleBtn>
+            </ul>
+          </>
+          }      
       </div>
     </>
   )
