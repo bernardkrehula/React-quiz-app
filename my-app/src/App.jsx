@@ -5,31 +5,31 @@ import './App.css'
 import SingleBtn from './Btn'
 import { throttle } from 'lodash';
 
+//Ako trazis vise od 20 pitanja za neku kategoriju pod nekim uvjetima a nema toliko pitanja napisi npr nismo u mogucnosti isporuciti 20 teskih pitanja 
 function App() {
-  const [ questions, setQuestions ] = useState('')
+  const [ tokenId, setTokenId ] = useState('');
+  const [ questions, setQuestions ] = useState([])
   const [ questionsProperties, setQuestionsProperties ] = useState({
     amount: '10',
-    category: 'sport',
+    category: '21',
     difficulty: 'easy'
   })
-  const [ tokenId, setTokenId ] = useState('');
+  
 
   const url = `https://opentdb.com/api.php?amount=10&category=24&difficulty=easy&type=multiple&token=${tokenId}`;
   
     const fetchData = async() => {
       const res = await fetch('https://opentdb.com/api_token.php?command=request')
-      const result = await fetch('https://opentdb.com/api_category.php')
       const data = await res.json();
-      const resData = await result.json()
-      const token = data.token;
-      setTokenId(token)
-      fetchTokenData()
-      console.log(resData)
+    
+      setTokenId(data.token)
     }
     const fetchTokenData = async() => {
-      const res = await fetch(`https://opentdb.com/api.php?amount=20&category=20&difficulty=easy&token=${tokenId}`)
+      const res = await fetch(`https://opentdb.com/api.php?amount=${questionsProperties.amount}&category=${questionsProperties.category}&difficulty=${questionsProperties.difficulty}&token=${tokenId}`)
       const data = await res.json();
-      console.log(data)
+     
+      fetchData()
+      setQuestions(data.results)
     }
     const handleChange = (e) => {
       const {name, value} = e.target;
@@ -43,8 +43,8 @@ function App() {
     }
     const handleSubmit = (e) => {
       e.preventDefault();
+      fetchTokenData();
       
-      console.log(questionsProperties, 'radi')
     }
 
   return (
