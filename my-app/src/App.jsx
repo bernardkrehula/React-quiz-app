@@ -7,8 +7,8 @@ import { throttle } from 'lodash';
 
 //Ako trazis vise od 20 pitanja za neku kategoriju pod nekim uvjetima a nema toliko pitanja napisi npr nismo u mogucnosti isporuciti 20 teskih pitanja 
 function App() {
-  const [ tokenId, setTokenId ] = useState('');
   const [ questions, setQuestions ] = useState([]);
+  const [ question, setQuestion ] = useState({});
   const [ questionsProperties, setQuestionsProperties ] = useState({
     amount: '10',
     category: '21',
@@ -17,19 +17,17 @@ function App() {
   const [ isStartClicked, setStartClicked ] = useState(false);
   const [ currentIndex, setCurrentIndex ] = useState(0);
   
-  const url = `https://opentdb.com/api.php?amount=10&category=24&difficulty=easy&type=multiple&token=${tokenId}`;
-  
     const fetchData = async() => {
       const res = await fetch('https://opentdb.com/api_token.php?command=request')
       const data = await res.json();
     
-      setTokenId(data.token)
+      fetchTokenData(data.token)
     }
-    const fetchTokenData = async() => {
-      const res = await fetch(`https://opentdb.com/api.php?amount=${questionsProperties.amount}&category=${questionsProperties.category}&difficulty=${questionsProperties.difficulty}&token=${tokenId}`)
+    const fetchTokenData = async(token) => {
+      const res = await fetch(`https://opentdb.com/api.php?amount=${questionsProperties.amount}&category=${questionsProperties.category}&difficulty=${questionsProperties.difficulty}&token=${token}`)
       const data = await res.json();
-      fetchData()
       setQuestions(data.results)
+      setQuestion(data.results[currentIndex]);
     }
     const handleChange = (e) => {
       const {name, value} = e.target;
@@ -41,13 +39,12 @@ function App() {
 
       
     }
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
       e.preventDefault();
-      fetchTokenData();
+      await fetchData();
       setStartClicked(true)
     }
     const changeQuestionIndex = () => {
-      console.log(questions)
       setCurrentIndex(prev => prev + 1)
     };
 
@@ -85,10 +82,13 @@ function App() {
           :
           <>
             <h2>Correct answers: 0/0</h2>
-            <h1>Which team won the 2015-16 English Premier League?</h1>
+            <h1>{question.question}</h1>
             <ul>
-              {}
-              <SingleBtn variation='answer' onClick={changeQuestionIndex}></SingleBtn>
+              {[...(question?.incorrect_answers || []), question.correct_answer]
+              .sort(() => Math.random() - 0.5) 
+              .map((answer, index) => (
+                <SingleBtn key={index} variation='answer' onClick={changeQuestionIndex}>{answer}</SingleBtn>
+              ))}
             </ul>
           </>
           }      
