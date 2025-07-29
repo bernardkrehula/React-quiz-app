@@ -47,7 +47,10 @@ function App() {
     const changeQuestionIndex = () => {
       setCurrentIndex(prev => prev + 1)
     };
-
+    const loadSecondQuestion = () => {
+      changeQuestionIndex();
+      setQuestion(questions[currentIndex])
+    };
   return (
     <>
       <div className='main'>
@@ -87,7 +90,7 @@ function App() {
               {[...(question?.incorrect_answers || []), question.correct_answer]
               .sort(() => Math.random() - 0.5) 
               .map((answer, index) => (
-                <SingleBtn key={index} variation='answer' onClick={changeQuestionIndex}>{answer}</SingleBtn>
+                <SingleBtn key={index} variation='answer' onClick={loadSecondQuestion}>{answer}</SingleBtn>
               ))}
             </ul>
           </>
