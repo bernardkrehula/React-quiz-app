@@ -7,10 +7,10 @@ import { throttle } from 'lodash';
 
 function App() {
   const [ questions, setQuestions ] = useState('')
-  const [ questionsProperties, setQuestionqProperties ] = useState({
-    amount: '',
-    category: '',
-    difficulty: ''
+  const [ questionsProperties, setQuestionsProperties ] = useState({
+    amount: '10',
+    category: 'sport',
+    difficulty: 'easy'
   })
   const [ tokenId, setTokenId ] = useState('');
 
@@ -33,11 +33,18 @@ function App() {
     }
     const handleChange = (e) => {
       const {name, value} = e.target;
+      
+      setQuestionsProperties(prev => ({
+        ...prev,
+        [name]: value
+      }))
 
-      console.log(name, value)
+      
     }
     const handleSubmit = (e) => {
       e.preventDefault();
+      
+      console.log(questionsProperties, 'radi')
     }
 
   return (
@@ -47,11 +54,11 @@ function App() {
         <form onSubmit={handleSubmit}>
           <li>
             <h2>Number of questions</h2>
-            <input type="number" min={0} max={20} defaultValue='10' name='amount' onChange={handleChange}/>
+            <input type="number" value={questionsProperties.amount} min={0} max={20} name='amount' onChange={handleChange}/>
           </li>
           <li>
             <h2>Category</h2>
-            <select id="" name='category' onChange={handleChange}>
+            <select id="" name='category' value={questionsProperties.category} onChange={handleChange}>
               <option value="21">sports</option>
               <option value="22">geography</option>
               <option value="20">mytholoy</option>
@@ -60,14 +67,14 @@ function App() {
           </li>
           <li>
             <h2>Difficulty</h2>
-            <select id="" name='difficulty' onChange={handleChange}>
+            <select id="" name='difficulty' value={questionsProperties.difficulty} onChange={handleChange}>
               <option value="easy">easy</option>
               <option value="medium">medium</option>
               <option value="hard">hard</option>
             </select>
           </li>
+          <SingleBtn type='submit'>Start playing</SingleBtn>
         </form>
-        <SingleBtn type='submit'>Start playing</SingleBtn>
       </div>
     </>
   )
