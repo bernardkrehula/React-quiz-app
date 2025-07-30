@@ -43,3 +43,15 @@ html {
   height: 25px;
   padding: 0 4px;
 }
+.finish {
+  position: absolute;
+  width: 300px;
+  background-color: rgb(237, 237, 237);
+  border-radius: 10px;
+  text-align: center;
+  font-size: 2rem;
+  padding: 20px 30px;
+  top: 250px;
+  transform: translate(25%, 50%);
+  box-shadow: 0 0 0 1000px rgb(0, 0, 0, 0.6);
+}

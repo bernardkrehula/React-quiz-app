@@ -14,7 +14,7 @@ function App() {
   const [ isStartClicked, setStartClicked ] = useState(false);
   const [ currentIndex, setCurrentIndex ] = useState(0);
   const [ correctCount, setCorrectCount ] = useState(0);
-  const [ incorrectCount, setIncorrectCount ] = useState(0);
+  const [ isFinished, setFinished ] = useState(false);
   
     const fetchData = async() => {
       const res = await fetch('https://opentdb.com/api_token.php?command=request')
@@ -42,20 +42,20 @@ function App() {
       setStartClicked(true)
     }
     const handleAnswer = (answer) => {
-      if(answer === question.correct_answer) setCorrectCount(prev => prev + 1);
-      else setIncorrectCount(prev => prev + 1);
-    }
-    const changeQuestionIndex = () => {
-      setCurrentIndex(prev => prev + 1)
-    };
-    const loadSecondQuestion = () => {
+      const isCorrect = answer === question.correct_answer
+      if(isCorrect) setCorrectCount(prev => prev + 1);
+
       const nextIndex = currentIndex + 1;
 
       if (nextIndex < questions.length) {
         setCurrentIndex(nextIndex);
         setQuestion(questions[nextIndex]);
       }
-    };
+      else setFinished(true);
+    }
+    
+
+    const answers = [...(question?.incorrect_answers || []), question.correct_answer].sort(() => Math.random() - 0.5);
 
   return (
     <>
@@ -90,19 +90,24 @@ function App() {
           </>
           :
           <>
-            <h2>Correct answers: 0/0</h2>
+            <h2>Correct answers: {correctCount}/{questions.length}</h2>
             <h1>{question.question}</h1>
             <ul>
-              {[...(question?.incorrect_answers || []), question.correct_answer]
-              .sort(() => Math.random() - 0.5) 
-              .map((answer, index) => (
-                <SingleBtn key={index} variation='answer' onClick={(e) => { 
-                  loadSecondQuestion()
-                  handleAnswer(e.target)
-                }}>{answer}</SingleBtn>
+              {answers.map((answer, index) => (
+                <SingleBtn key={index} variation='answer' onClick={() => { handleAnswer(answer)}}>{answer}</SingleBtn>
               ))}
             </ul>
-            <SingleBtn variation='next-question' onClick={loadSecondQuestion}>Next question</SingleBtn>
+            <SingleBtn variation='next-question' onClick={ handleAnswer}>Next question</SingleBtn>
+            {isFinished ? 
+              <li className='finish'>
+                <h3>Game Over!</h3>
+                <p>You answered {correctCount} / {questions.length} or {correctCount/questions.length * 100}% </p>
+                <SingleBtn onClick={() => setFinished(false)}>Play again?</SingleBtn>
+              </li>
+            :
+            ''
+            }
+            
           </>
           }      
       </div>
