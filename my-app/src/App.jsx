@@ -1,9 +1,6 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useState } from 'react'
 import './App.css'
 import SingleBtn from './Btn'
-import { throttle } from 'lodash';
 
 //Ako trazis vise od 20 pitanja za neku kategoriju pod nekim uvjetima a nema toliko pitanja napisi npr nismo u mogucnosti isporuciti 20 teskih pitanja 
 function App() {
@@ -16,6 +13,8 @@ function App() {
   });
   const [ isStartClicked, setStartClicked ] = useState(false);
   const [ currentIndex, setCurrentIndex ] = useState(0);
+  const [ correctCount, setCorrectCount ] = useState(0);
+  const [ incorrectCount, setIncorrectCount ] = useState(0);
   
     const fetchData = async() => {
       const res = await fetch('https://opentdb.com/api_token.php?command=request')
@@ -36,21 +35,28 @@ function App() {
         ...prev,
         [name]: value
       }))
-
-      
     }
     const handleSubmit = async(e) => {
       e.preventDefault();
       await fetchData();
       setStartClicked(true)
     }
+    const handleAnswer = (answer) => {
+      if(answer === question.correct_answer) setCorrectCount(prev => prev + 1);
+      else setIncorrectCount(prev => prev + 1);
+    }
     const changeQuestionIndex = () => {
       setCurrentIndex(prev => prev + 1)
     };
     const loadSecondQuestion = () => {
-      changeQuestionIndex();
-      setQuestion(questions[currentIndex])
+      const nextIndex = currentIndex + 1;
+
+      if (nextIndex < questions.length) {
+        setCurrentIndex(nextIndex);
+        setQuestion(questions[nextIndex]);
+      }
     };
+
   return (
     <>
       <div className='main'>
@@ -90,9 +96,13 @@ function App() {
               {[...(question?.incorrect_answers || []), question.correct_answer]
               .sort(() => Math.random() - 0.5) 
               .map((answer, index) => (
-                <SingleBtn key={index} variation='answer' onClick={loadSecondQuestion}>{answer}</SingleBtn>
+                <SingleBtn key={index} variation='answer' onClick={(e) => { 
+                  loadSecondQuestion()
+                  handleAnswer(e.target)
+                }}>{answer}</SingleBtn>
               ))}
             </ul>
+            <SingleBtn variation='next-question' onClick={loadSecondQuestion}>Next question</SingleBtn>
           </>
           }      
       </div>
