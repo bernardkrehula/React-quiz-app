@@ -51,9 +51,16 @@ function App() {
         setCurrentIndex(nextIndex);
         setQuestion(questions[nextIndex]);
       }
-      else setFinished(true);
+      else {
+        setFinished(true)
+        setCurrentIndex(0)
+      };
     }
     
+    const resetGame = () => {
+      setStartClicked(false)
+      setFinished(false)
+    }
 
     const answers = [...(question?.incorrect_answers || []), question.correct_answer].sort(() => Math.random() - 0.5);
 
@@ -102,7 +109,7 @@ function App() {
               <li className='finish'>
                 <h3>Game Over!</h3>
                 <p>You answered {correctCount} / {questions.length} or {correctCount/questions.length * 100}% </p>
-                <SingleBtn onClick={() => setFinished(false)}>Play again?</SingleBtn>
+                <SingleBtn onClick={resetGame}>Play again?</SingleBtn>
               </li>
             :
             ''
