@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
-import SingleBtn from './Btn'
+import SingleBtn from './SingleBtn'
+import SingleAnswer from './SingleAnswer';
 
 //Ako trazis vise od 20 pitanja za neku kategoriju pod nekim uvjetima a nema toliko pitanja napisi npr nismo u mogucnosti isporuciti 20 teskih pitanja 
 function App() {
@@ -17,17 +18,12 @@ function App() {
   const [ isFinished, setFinished ] = useState(false);
   
     const fetchData = async() => {
-      const res = await fetch('https://opentdb.com/api_token.php?command=request')
-      const data = await res.json();
-    
-      fetchTokenData(data.token)
-    }
-    const fetchTokenData = async(token) => {
-      const res = await fetch(`https://opentdb.com/api.php?amount=${questionsProperties.amount}&category=${questionsProperties.category}&difficulty=${questionsProperties.difficulty}&token=${token}`)
+      const res = await fetch(`https://opentdb.com/api.php?amount=${questionsProperties.amount}&category=${questionsProperties.category}&difficulty=${questionsProperties.difficulty}`)
       const data = await res.json();
       setQuestions(data.results)
       setQuestion(data.results[currentIndex]);
     }
+
     const handleChange = (e) => {
       const {name, value} = e.target;
       
@@ -51,15 +47,14 @@ function App() {
         setCurrentIndex(nextIndex);
         setQuestion(questions[nextIndex]);
       }
-      else {
-        setFinished(true)
-        setCurrentIndex(0)
-      };
+      else setFinished(true);
     }
     
     const resetGame = () => {
       setStartClicked(false)
       setFinished(false)
+      setCurrentIndex(0)
+      setCorrectCount(0)
     }
 
     const answers = [...(question?.incorrect_answers || []), question.correct_answer].sort(() => Math.random() - 0.5);
@@ -101,13 +96,16 @@ function App() {
             <h1>{question.question}</h1>
             <ul>
               {answers.map((answer, index) => (
-                <SingleBtn key={index} variation='answer' onClick={() => { handleAnswer(answer)}}>{answer}</SingleBtn>
+                <SingleAnswer key={index} onClick={() => { handleAnswer(answer)}} answer={answer}></SingleAnswer>
               ))}
             </ul>
-            <SingleBtn variation='next-question' onClick={ handleAnswer}>Next question</SingleBtn>
+            <SingleBtn variation='next-question' onClick={handleAnswer}>Next question</SingleBtn>
             {isFinished ? 
               <li className='finish'>
                 <h3>Game Over!</h3>
+                {/* Za answer napravi posebnu komponentu a ne gurati sve u singleBtn */} 
+                {/* Napraviti komponentu sa selecta i dodaj label */}
+                {/* Pogledaj dangerouslySetInnerHTML */}
                 <p>You answered {correctCount} / {questions.length} or {correctCount/questions.length * 100}% </p>
                 <SingleBtn onClick={resetGame}>Play again?</SingleBtn>
               </li>

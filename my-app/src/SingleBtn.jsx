@@ -1,4 +1,4 @@
-import './Btn.css'
+import './SingleBtn.css'
 
 const SingleBtn = ({onClick, variation, type, children}) => {
 

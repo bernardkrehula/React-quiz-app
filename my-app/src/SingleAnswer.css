@@ -1,0 +1,13 @@
+.singleAnswer {
+    display: block;
+    border: none;
+    width: 100%;
+    font-size: 1.8rem;
+    font-weight: 700;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    padding: 10px;
+    background-color: rgb(26, 170, 108);
+    color: white;
+    margin-top: 10px;
+    cursor: pointer;
+}
