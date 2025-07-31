@@ -2,8 +2,8 @@ import { useState } from 'react'
 import './App.css'
 import SingleBtn from './SingleBtn'
 import SingleAnswer from './SingleAnswer';
+import Select from './Select';
 
-//Ako trazis vise od 20 pitanja za neku kategoriju pod nekim uvjetima a nema toliko pitanja napisi npr nismo u mogucnosti isporuciti 20 teskih pitanja 
 function App() {
   const [ questions, setQuestions ] = useState([]);
   const [ question, setQuestion ] = useState({});
@@ -16,7 +16,18 @@ function App() {
   const [ currentIndex, setCurrentIndex ] = useState(0);
   const [ correctCount, setCorrectCount ] = useState(0);
   const [ isFinished, setFinished ] = useState(false);
-  
+  const category = [
+    {value: 21, type: 'sport'}, 
+    {value: 22, type: 'geography'},
+    {value: 20, type: 'mytholoy'},
+    {value: 25, type: 'art'}
+  ]
+  const difficulty = [
+    {value: 'easy', type: 'easy'}, 
+    {value: 'medium', type: 'medium'}, 
+    {value: 'hard', type: 'hard'}
+  ]
+
     const fetchData = async() => {
       const res = await fetch(`https://opentdb.com/api.php?amount=${questionsProperties.amount}&category=${questionsProperties.category}&difficulty=${questionsProperties.difficulty}`)
       const data = await res.json();
@@ -72,20 +83,11 @@ function App() {
             </li>
             <li>
               <h2>Category</h2>
-              <select id="" name='category' value={questionsProperties.category} onChange={handleChange}>
-                <option value="21">sports</option>
-                <option value="22">geography</option>
-                <option value="20">mytholoy</option>
-                <option value="25">art</option>
-              </select>
+              <Select options={category} value={questionsProperties.category} handleChange={handleChange}/>
             </li>
             <li>
               <h2>Difficulty</h2>
-              <select id="" name='difficulty' value={questionsProperties.difficulty} onChange={handleChange}>
-                <option value="easy">easy</option>
-                <option value="medium">medium</option>
-                <option value="hard">hard</option>
-              </select>
+              <Select options={difficulty} value={questionsProperties.category} handleChange={handleChange}/>
             </li>
             <SingleBtn type='submit'>Start playing</SingleBtn>
             </form>
